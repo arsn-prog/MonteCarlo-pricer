@@ -1,0 +1,67 @@
+Sub tabl()
+
+Range("E3:IT255").Clear
+K = Range("B2").Value
+S = Range("B3").Value
+r = Range("B4").Value
+div = Range("B5").Value
+sigma = Range("B6").Value
+T = Range("B7").Value
+
+PrixBS = BS(K, S, r, div, sigma, T)
+Range("B19").Value = PrixBS
+
+Nbtraj = Range("B8").Value
+For j = 1 To Nbtraj
+Cells(2, j + 4).Value = Range("B3").Value
+Next j
+
+For j = 1 To Nbtraj
+Cells(1, j + 4) = j
+Next j
+
+Nbsteps = Range("B9")
+dt = T / Nbsteps
+
+Range("D2").Value = 0
+
+For i = 1 To Nbsteps
+Cells(i + 2, 4).Value = i * dt
+Next i
+
+
+
+Randomize
+For i = 1 To Nbsteps
+For j = 1 To Nbtraj
+Z = WorksheetFunction.NormSInv(Rnd())
+Cells(i + 2, j + 4).Value = Cells(i + 1, j + 4).Value * Exp((r - div - 0.5 * sigma ^ 2) * dt + sigma * Sqr(dt) * Z)
+Next j
+Next i
+
+
+For j = 1 To Nbtraj
+Cells(255, j + 4).Value = Round(payoff(Cells(254, j + 4).Value, Range("B2").Value), 2)
+Next j
+
+Range("B18").Value = myavg(Range(Cells(255, 5), Cells(255, Nbtraj + 4))) * Exp(-r * T)
+
+
+
+Dim co As ChartObject
+For Each co In ActiveSheet.ChartObjects
+    co.Delete
+Next co
+
+
+Dim chart As ChartObject
+Set chart = ActiveSheet.ChartObjects.Add(Left:=400, Top:=100, Width:=600, Height:=400)
+chart.chart.ChartType = xlLine
+chart.chart.SetSourceData Source:=Range(Cells(2, 5), Cells(Nbsteps + 2, Nbtraj + 4))
+chart.chart.HasLegend = False
+chart.chart.HasTitle = True
+chart.chart.ChartTitle.Text = "Trajectoires Monte Carlo"
+
+
+
+End Sub
