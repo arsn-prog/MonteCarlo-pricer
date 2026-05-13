@@ -1,0 +1,51 @@
+'Fonction Max'
+Function mymax(c As Double, d As Double) As Double
+If c > d Then
+mymax = c
+Else
+mymax = d
+End If
+End Function
+
+'Fonction Payoff'
+Function payoff(ST As Double, K As Double) As Double
+payoff = mymax(ST - K, 0)
+End Function
+
+
+'Fonction Somme'
+Function mysum(a As Range) As Double
+Dim total As Double
+Dim cellule As Range
+Dim compteur As Double
+total = 0
+For Each cellule In a
+total = total + cellule.Value
+Next cellule
+
+mysum = total
+End Function
+
+'Fonction average'
+Function myavg(a As Range)
+Dim total As Double
+Dim compteur As Double
+Dim cellule As Range
+
+For Each cellule In a
+total = total + cellule.Value
+compteur = compteur + 1
+Next cellule
+
+myavg = total / compteur
+End Function
+
+'Fonction factorielle'
+Function myfact(x As Integer) As Integer
+fct = 1
+For i = 1 To x
+fct = fct * i
+Next i
+ myfact = fct
+
+End Function
