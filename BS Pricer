@@ -1,0 +1,53 @@
+Function BS(K, S, r, div, sigma, T)
+Dim d1 As Double
+Dim d2 As Double
+d1 = (Log(S / K) + (r - div + 0.5 * sigma ^ 2) * T) / (sigma * Sqr(T))
+d2 = d1 - sigma * Sqr(T)
+BS = S * Exp(-div * T) * WorksheetFunction.Norm_S_Dist(d1, True) - K * Exp(-r * T) * WorksheetFunction.Norm_S_Dist(d2, True)
+End Function
+
+Sub greeks()
+K = Range("B2").Value
+S = Range("B3").Value
+r = Range("B4").Value
+div = Range("B5").Value
+sigma = Range("B6").Value
+T = Range("B7").Value
+
+OptionCall = BS(K, S, r, div, sigma, T)
+Range("A15").Value = OptionCall
+
+
+
+d1 = (Log(S / K) + (r - div + 0.5 * sigma ^ 2) * T) / (sigma * Sqr(T))
+d2 = d1 - sigma * Sqr(T)
+
+Pi = 4 * Atn(1)
+repart = (1 / Sqr(2 * Pi)) * Exp(-(d1 ^ 2) / 2)
+
+
+Delta = WorksheetFunction.Norm_S_Dist(d1, True)
+Range("F2").Value = Delta
+
+Gamma = (Exp(-div * T) * Delta) / (S * sigma * Sqr(T))
+Range("F3").Value = Gamma
+
+Vega = (S * Exp(-div * T) * repart * Sqr(T)) / 100
+Range("F4").Value = Vega
+
+Theta = -(S * Exp(-div * T) * repart * sigma) / (2 * Sqr(T)) - r * K * Exp(-r * T) * WorksheetFunction.Norm_S_Dist(d2, True) + div * S * Exp(-div * T) * WorksheetFunction.Norm_S_Dist(d1, True)
+Range("F5").Value = Theta
+
+Rho = (K * T * Exp(-r * T) * WorksheetFunction.Norm_S_Dist(d2, True)) / 100
+Range("F6").Value = Rho
+
+
+
+MsgBox ("Prix Black-Sholes " & " : " & Round(OptionCall, 2) & vbNewLine & _
+"Delta " & " : " & Round(Delta, 2) & vbNewLine & _
+"Gamma" & " : " & Round(Gamma, 2) & vbNewLine & _
+"Vega" & " : " & Round(Vega, 2) & vbNewLine & _
+"Theta" & " : " & Round(Theta, 2) & vbNewLine & _
+"Rho" & " : " & Round(Rho, 2))
+
+End Sub
